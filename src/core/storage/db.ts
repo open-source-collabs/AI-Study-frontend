@@ -1,9 +1,12 @@
 import Dexie, { type Table } from "dexie";
-import type { RememberedProvider, StudySet } from "./types";
+import type { Checkpoint, ProgressEvent, RememberedProvider, StoredOutput, StudySet } from "./types";
 
 class StudyDatabase extends Dexie {
   studySets!: Table<StudySet, string>;
   rememberedProviders!: Table<RememberedProvider, string>;
+  outputs!: Table<StoredOutput, string>;
+  progressEvents!: Table<ProgressEvent, number>;
+  checkpoints!: Table<Checkpoint, string>;
 
   constructor() {
     super("study-os");
@@ -11,6 +14,8 @@ class StudyDatabase extends Dexie {
       studySets: "id, updatedAt, sourceType",
       rememberedProviders: "id, providerId, updatedAt",
     });
+    this.version(2).stores({ outputs: "id, setId" });
+    this.version(3).stores({ progressEvents: "++id, setId, at", checkpoints: "id, setId, updatedAt" });
   }
 }
 
