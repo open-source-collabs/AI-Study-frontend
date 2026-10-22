@@ -50,8 +50,7 @@ export function ProviderSettingForm() {
     <Input id="provider-model" onChange={(event) => provider.setSettings({ model: event.target.value })} placeholder={definition.modelHint} value={provider.model} />
     <label className="field-label" htmlFor="api-key">API key</label>
     <Input autoComplete="off" id="api-key" onChange={(event) => provider.setSettings({ apiKey: event.target.value })} placeholder="Paste your provider key" type="password" value={provider.apiKey} />
-    <label className="remember-option"><input checked={provider.rememberOnDevice} onChange={(event) => provider.setSettings({ rememberOnDevice: event.target.checked })} type="checkbox" />Remember this key on this device</label>
-    <p className="field-help">Keys stay in memory by default. If you opt in, the key is stored only in this browser&apos;s IndexedDB and never in a public environment variable.</p>
+    <label className="remember-option"><input checked={provider.rememberOnDevice} onChange={(event) => provider.setSettings({ rememberOnDevice: event.target.checked })} type="checkbox" />Remember my key</label>
     <div className="form-actions"><Button onClick={handleSave} type="button">Save provider</Button><Button onClick={handleTest} type="button" variant="secondary">Test connection</Button>{provider.hasRememberedKey && <Button onClick={handleRemove} type="button" variant="ghost">Remove remembered key</Button>}{status && <span className="status-message">{status}</span>}</div>
   </Card>;
 }

@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useStoredStudySets } from "@/core/hooks/use-stored-study-sets";
 import type { StudySet } from "@/core/storage";
+import { ActiveLink } from "./ActiveLink";
 
 const utilityNavigation = [
   { href: "/help", label: "Help & guide", icon: "?" },
@@ -13,19 +13,10 @@ const utilityNavigation = [
 
 type NavigationItem = { href: string; label: string; icon: string };
 
-function NavigationLinkView({ href, label, icon, active }: NavigationItem & { active: boolean }) {
-  return <Link aria-current={active ? "page" : undefined} className={`nav-link ${active ? "nav-link-active" : ""}`} href={href}>
+function NavigationLink({ href, label, icon }: NavigationItem) {
+  return <ActiveLink activeClassName="nav-link-active" className="nav-link" href={href}>
     <span className="nav-icon" aria-hidden="true">{icon}</span><span>{label}</span>
-  </Link>;
-}
-
-function ActiveNavigationLink(item: NavigationItem) {
-  return <NavigationLinkView {...item} active={usePathname() === item.href} />;
-}
-
-// usePathname() is runtime-only data, so it must sit inside Suspense; the fallback is the same link, just not highlighted.
-function NavigationLink(item: NavigationItem) {
-  return <Suspense fallback={<NavigationLinkView {...item} active={false} />}><ActiveNavigationLink {...item} /></Suspense>;
+  </ActiveLink>;
 }
 
 function SavedStudySets({ error, isLoading, studySets }: { error: string | null; isLoading: boolean; studySets: StudySet[] }) {
@@ -57,7 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className="brand-mark" aria-hidden="true">S</span>
           <span>StudyOS<small>AI study companion</small></span>
         </Link>
-        <div className="search-hint" aria-label="Search shortcut"><span>Search guides...</span><kbd>⌘K</kbd></div>
+        <div className="search-hint" aria-label="Search shortcut"><span>Search guides...</span><kbd>Clrt + K</kbd></div>
         <nav className="nav-group" aria-label="Study workspace">
           <span className="nav-label">Workspace</span>
           {primaryNavigation.map((item) => <NavigationLink key={item.href} {...item} />)}
@@ -82,7 +73,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="dock-card">
         <span className="dock-icon" aria-hidden="true">◒</span>
         <h2>Build a study habit</h2>
-        <p>Complete one short session today. Your progress will appear here once study data is connected.</p>
+        <p>Complete one short session today. Your progress and where you left off are on the dashboard.</p>
       </div>
       <div className="shortcut-list"><span className="eyebrow">Shortcuts</span><div>
         <span>Upload material</span><kbd>Ctrl + U</kbd></div>

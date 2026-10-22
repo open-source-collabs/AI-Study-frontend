@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card } from "@/core/components/Card";
 import { Chip } from "@/core/components/Chip";
 import { UploadDropzone } from "@/features/material";
+import { ContinueCard, ProgressOverview } from "@/features/progress";
 import { StudySetList } from "@/features/study-sets";
 
 export default function DashboardPage() {
@@ -11,6 +12,7 @@ export default function DashboardPage() {
       <h1>Welcome, learner.</h1>
       <p>Pick up where you left off or start a focused study session.</p></div>
       <Link className="button button-primary" href="/help">How it works</Link></header>
+    <ContinueCard />
     <section className="hero-card"><div>
       <Chip>Core loop</Chip>
       <h2>Turn material into momentum.</h2>
@@ -30,6 +32,7 @@ export default function DashboardPage() {
         <span className="eyebrow">Foundation</span>
         <h2>Getting started</h2></div></div><ol className="steps-list"><li><span>1</span>Explore the workspace</li>
           <li><span>2</span>Configure an AI provider</li><li><span>3</span>Upload your first material</li></ol>
-        <Link className="text-link" href="/help">View all steps →</Link></Card></section>
+        <Link className="text-link" href="/help">View all steps →</Link></Card>
+      <ProgressOverview /></section>
   </div>;
 }

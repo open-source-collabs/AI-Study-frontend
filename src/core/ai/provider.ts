@@ -18,7 +18,7 @@ export class ProviderError extends Error {
 
 export function statusToError(status: number) {
   if (status === 401 || status === 403) return new ProviderError("unauthorized", "The provider rejected the API key.", status);
-  if (status === 429) return new ProviderError("rate_limited", "The provider rate limit was reached.", status);
+  if (status === 429) return new ProviderError("rate_limited", "The provider rate limit was reached. Wait a minute, then try again.", status);
   if (status >= 500) return new ProviderError("unavailable", "The provider is temporarily unavailable.", status);
   return new ProviderError("request_failed", "The provider request failed.", status);
 }
