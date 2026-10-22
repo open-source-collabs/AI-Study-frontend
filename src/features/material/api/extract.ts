@@ -1,4 +1,5 @@
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_PDF_PAGES = 300;
 const TEXT_TYPES = new Set(["text/plain", "text/markdown", "text/x-markdown"]);
 
 function assertFileIsSupported(file: File) {
@@ -19,15 +20,20 @@ export async function extractTextFromFile(file: File) {
   const document = await getDocument({ data: buffer, isEvalSupported: false }).promise;
   const pages: string[] = [];
 
-  for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
-    const page = await document.getPage(pageNumber);
-    const content = await page.getTextContent();
-    const text = content.items
-      .map((item) => ("str" in item && typeof item.str === "string" ? item.str : ""))
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (text) pages.push(text);
+  try {
+    if (document.numPages > MAX_PDF_PAGES) throw new Error(`PDFs can have at most ${MAX_PDF_PAGES} pages.`);
+    for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
+      const page = await document.getPage(pageNumber);
+      const content = await page.getTextContent();
+      const text = content.items
+        .map((item) => ("str" in item && typeof item.str === "string" ? item.str : ""))
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (text) pages.push(text);
+    }
+  } finally {
+    await document.destroy();
   }
 
   if (!pages.length) throw new Error("No text layer was found in this PDF. Scanned PDFs are not supported yet.");

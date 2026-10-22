@@ -23,7 +23,6 @@ export function useAddMaterial() {
         title: input.title.trim() || input.sourceName.replace(/\.[^.]+$/, "") || "Untitled study set",
         sourceName: input.sourceName,
         sourceType: input.sourceType,
-        text,
         chunks: chunkText(text),
         createdAt: now,
         updatedAt: now,
@@ -40,7 +39,14 @@ export function useAddMaterial() {
   }
 
   async function addFile(file: File, title: string) {
-    const text = await extractTextFromFile(file);
+    setError(null);
+    let text: string;
+    try {
+      text = await extractTextFromFile(file);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not read this file.");
+      throw cause;
+    }
     return addMaterial({ title, sourceName: file.name, sourceType: file.name.toLowerCase().endsWith(".pdf") ? "pdf" : "text", text });
   }
 

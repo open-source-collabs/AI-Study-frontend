@@ -22,5 +22,5 @@ export function MaterialViewer({ setId }: { setId: string }) {
   if (isLoading) return <div className="page-stack"><div className="loading-state">Loading study set...</div></div>;
   if (!studySet) return <div className="page-stack"><Card className="empty-card"><h2>Study set not found</h2><p>This set may only exist in another browser.</p></Card></div>;
 
-  return <div className="page-stack material-viewer"><header className="page-heading"><span className="eyebrow">{studySet.sourceType} · {studySet.sourceName}</span><h1>{studySet.title}</h1><p>{studySet.chunks.length} text chunks ready for AI study modes.</p></header><Card><pre className="material-text">{studySet.text}</pre></Card></div>;
+  return <div className="page-stack material-viewer"><header className="page-heading"><span className="eyebrow">{studySet.sourceType} · {studySet.sourceName}</span><h1>{studySet.title}</h1><p>{studySet.chunks.length} text chunks ready for AI study modes.</p></header><Card><pre className="material-text">{studySet.chunks.join("")}</pre></Card></div>;
 }

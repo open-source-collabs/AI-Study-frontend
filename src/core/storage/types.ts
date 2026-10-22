@@ -5,7 +5,7 @@ export type StudySet = {
   title: string;
   sourceName: string;
   sourceType: MaterialSourceType;
-  text: string;
+  // Chunks never overlap, so chunks.join("") is the full text. Storing both doubled the size of every set.
   chunks: string[];
   createdAt: number;
   updatedAt: number;

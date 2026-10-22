@@ -1,4 +1,4 @@
-import type { MaterialSourceType, StudySet } from "@/core/storage";
+import type { MaterialSourceType } from "@/core/storage";
 
 export type MaterialInput = {
   title: string;
@@ -6,5 +6,3 @@ export type MaterialInput = {
   sourceType: MaterialSourceType;
   text: string;
 };
-
-export type MaterialResult = StudySet;
