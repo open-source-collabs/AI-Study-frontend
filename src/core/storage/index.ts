@@ -27,3 +27,4 @@ export const providerCredentialRepository = {
     await studyDatabase.rememberedProviders.where("providerId").equals(providerId).delete();
   },
 };
+ 

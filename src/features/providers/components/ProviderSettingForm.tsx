@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Button } from "@/core/components/Button";
 import { Card } from "@/core/components/Card";
 import { Chip } from "@/core/components/Chip";
-import { Input } from "@/core/components/input";
+import { Input } from "@/core/components/Input";
+import { browserTransport } from "@/core/api/http-client";
+import { testProviderConnection } from "../api/test-connection";
 import { useProvider } from "../hooks/useProvider";
 import { PROVIDERS } from "../types";
 
@@ -22,6 +24,20 @@ export function ProviderSettingForm() {
     setStatus(provider.rememberOnDevice ? "Provider saved on this device." : "Provider saved for this session only.");
   }
 
+  async function handleTest() {
+    if (!provider.apiKey.trim()) {
+      setStatus("Add an API key before testing.");
+      return;
+    }
+    setStatus("Testing connection...");
+    try {
+      await testProviderConnection(provider, browserTransport);
+      setStatus("Connection works.");
+    } catch (cause) {
+      setStatus(cause instanceof Error ? cause.message : "Connection test failed.");
+    }
+  }
+
   async function handleRemove() {
     await provider.removeRemembered();
     setStatus("Remembered key removed from this device.");
@@ -36,6 +52,6 @@ export function ProviderSettingForm() {
     <Input autoComplete="off" id="api-key" onChange={(event) => provider.setSettings({ apiKey: event.target.value })} placeholder="Paste your provider key" type="password" value={provider.apiKey} />
     <label className="remember-option"><input checked={provider.rememberOnDevice} onChange={(event) => provider.setSettings({ rememberOnDevice: event.target.checked })} type="checkbox" />Remember this key on this device</label>
     <p className="field-help">Keys stay in memory by default. If you opt in, the key is stored only in this browser&apos;s IndexedDB and never in a public environment variable.</p>
-    <div className="form-actions"><Button onClick={handleSave} type="button">Save provider</Button>{provider.hasRememberedKey && <Button onClick={handleRemove} type="button" variant="ghost">Remove remembered key</Button>}{status && <span className="status-message">{status}</span>}</div>
+    <div className="form-actions"><Button onClick={handleSave} type="button">Save provider</Button><Button onClick={handleTest} type="button" variant="secondary">Test connection</Button>{provider.hasRememberedKey && <Button onClick={handleRemove} type="button" variant="ghost">Remove remembered key</Button>}{status && <span className="status-message">{status}</span>}</div>
   </Card>;
 }

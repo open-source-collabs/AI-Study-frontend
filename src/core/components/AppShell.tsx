@@ -1,35 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { Suspense, type ReactNode } from "react";
 import { useStoredStudySets } from "@/core/hooks/use-stored-study-sets";
-
-const primaryNavigation = [
-  { href: "/", label: "Dashboard", icon: "▦" },
-  { href: "/sets/demo/summary", label: "My library", icon: "□" },
-  { href: "/sets/demo/flashcards", label: "Flashcards", icon: "◇" },
-  { href: "/sets/demo/quiz", label: "Quizzes", icon: "✓" },
-];
+import type { StudySet } from "@/core/storage";
 
 const utilityNavigation = [
   { href: "/help", label: "Help & guide", icon: "?" },
   { href: "/setting/provider", label: "Provider settings", icon: "⚙" },
 ];
 
-type NavigationItem = { href: string; label: string; icon: string; active: boolean };
+type NavigationItem = { href: string; label: string; icon: string };
 
-function NavigationLink({ href, label, icon, active }: NavigationItem) {
-  return <Link className={`nav-link ${active ? "nav-link-active" : ""}`} href={href}>
+function NavigationLinkView({ href, label, icon, active }: NavigationItem & { active: boolean }) {
+  return <Link aria-current={active ? "page" : undefined} className={`nav-link ${active ? "nav-link-active" : ""}`} href={href}>
     <span className="nav-icon" aria-hidden="true">{icon}</span><span>{label}</span>
   </Link>;
 }
 
-function SavedStudySets() {
-  const { isLoading, studySets } = useStoredStudySets();
-  return <nav className="nav-group saved-set-nav" aria-label="Saved study sets"><span className="nav-label">Study sets</span>{isLoading && <span className="nav-link"><span>Loading...</span></span>}{!isLoading && !studySets.length && <span className="nav-link"><span>No sets yet</span></span>}{studySets.map((studySet) => <NavigationLink active={false} href={`/sets/${studySet.id}/summary`} icon="•" key={studySet.id} label={studySet.title} />)}</nav>;
+function ActiveNavigationLink(item: NavigationItem) {
+  return <NavigationLinkView {...item} active={usePathname() === item.href} />;
+}
+
+// usePathname() is runtime-only data, so it must sit inside Suspense; the fallback is the same link, just not highlighted.
+function NavigationLink(item: NavigationItem) {
+  return <Suspense fallback={<NavigationLinkView {...item} active={false} />}><ActiveNavigationLink {...item} /></Suspense>;
+}
+
+function SavedStudySets({ error, isLoading, studySets }: { error: string | null; isLoading: boolean; studySets: StudySet[] }) {
+  return <nav className="nav-group saved-set-nav" aria-label="Saved study sets"><span className="nav-label">Study sets</span>{isLoading && <span className="nav-link"><span>Loading...</span></span>}{!isLoading && error && <span className="nav-link"><span>Could not load sets</span></span>}{!isLoading && !error && !studySets.length && <span className="nav-link"><span>No sets yet</span></span>}{studySets.map((studySet) => <NavigationLink href={`/sets/${studySet.id}/summary`} icon="•" key={studySet.id} label={studySet.title} />)}</nav>;
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const { error, isLoading, studySets } = useStoredStudySets();
+  // Study modes belong to a set, so these links only exist once a set does (newest first).
+  const latestId = studySets[0]?.id;
+  const primaryNavigation: NavigationItem[] = [
+    { href: "/", label: "Dashboard", icon: "▦" },
+    ...(latestId ? [
+      { href: `/sets/${latestId}/summary`, label: "Latest set", icon: "□" },
+      { href: `/sets/${latestId}/flashcards`, label: "Flashcards", icon: "◇" },
+      { href: `/sets/${latestId}/quiz`, label: "Quizzes", icon: "✓" },
+    ] : []),
+  ];
+
   return <div className="app-shell">
     <div className="mobile-topbar">
       <Link className="brand" href="/"><span className="brand-mark" aria-hidden="true">S</span><span>StudyOS</span></Link>
@@ -45,17 +60,17 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="search-hint" aria-label="Search shortcut"><span>Search guides...</span><kbd>⌘K</kbd></div>
         <nav className="nav-group" aria-label="Study workspace">
           <span className="nav-label">Workspace</span>
-          {primaryNavigation.map((item) => <NavigationLink key={item.href} {...item} active={false} />)}
+          {primaryNavigation.map((item) => <NavigationLink key={item.href} {...item} />)}
         </nav>
-        <SavedStudySets />
+        <SavedStudySets error={error} isLoading={isLoading} studySets={studySets} />
         <nav className="nav-group" aria-label="Support and settings">
           <span className="nav-label">Support</span>
-          {utilityNavigation.map((item) => <NavigationLink key={item.href} {...item} active={false} />)}
+          {utilityNavigation.map((item) => <NavigationLink key={item.href} {...item} />)}
         </nav>
       </div>
       <div className="workspace-status">
         <span className="avatar">AS</span>
-        <span><strong>AI Study</strong><small>Frontend workspace</small></span>
+        <span><strong>AI Study</strong><small>Learning workspace</small></span>
         <span className="status-dot" aria-label="Local workspace ready" />
       </div>
     </aside>
@@ -68,10 +83,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         <span className="dock-icon" aria-hidden="true">◒</span>
         <h2>Build a study habit</h2>
         <p>Complete one short session today. Your progress will appear here once study data is connected.</p>
-        <div className="progress-track" aria-label="Study progress"><span style={{ width: "24%" }} /></div>
-        <div className="metric-row"><span>Today</span><strong>24%</strong></div>
       </div>
-      <div className="shortcut-list"><span className="eyebrow">Shortcuts</span><div><span>Upload material</span><kbd>⌘U</kbd></div><div><span>Open help</span><kbd>?</kbd></div></div>
+      <div className="shortcut-list"><span className="eyebrow">Shortcuts</span><div>
+        <span>Upload material</span><kbd>Ctrl + U</kbd></div>
+        <div><span>Open help</span>
+          <kbd>?</kbd></div></div>
     </aside>
   </div>;
 }

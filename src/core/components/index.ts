@@ -4,4 +4,4 @@ export { Button } from "./Button";
 export { Card } from "./Card";
 export { Chip } from "./Chip";
 export { FeaturePlaceholder } from "./FeaturePlaceholder";
-export { Input } from "./input";
+export { Input } from "./Input";
