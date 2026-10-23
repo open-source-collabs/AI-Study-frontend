@@ -18,6 +18,9 @@ export class ProviderError extends Error {
 
 export function statusToError(status: number) {
   if (status === 401 || status === 403) return new ProviderError("unauthorized", "The provider rejected the API key.", status);
+  // 404 means the model name is unknown (providers retire models), and some reject a bad key with 400.
+  if (status === 404) return new ProviderError("request_failed", "The provider does not know this model. Check the model name in Provider settings.", status);
+  if (status === 400) return new ProviderError("request_failed", "The provider rejected the request. Check your API key and model name.", status);
   if (status === 429) return new ProviderError("rate_limited", "The provider rate limit was reached. Wait a minute, then try again.", status);
   if (status >= 500) return new ProviderError("unavailable", "The provider is temporarily unavailable.", status);
   return new ProviderError("request_failed", "The provider request failed.", status);

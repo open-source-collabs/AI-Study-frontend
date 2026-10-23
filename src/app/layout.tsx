@@ -10,7 +10,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "StudyOS — AI Study Companion",
+  title: { default: "StudyOS — AI Study Companion", template: "%s · StudyOS" },
   description: "A focused workspace for turning study material into structured learning.",
 };
 
