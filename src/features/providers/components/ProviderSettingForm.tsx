@@ -51,6 +51,6 @@ export function ProviderSettingForm() {
     <label className="field-label" htmlFor="api-key">API key</label>
     <Input autoComplete="off" id="api-key" onChange={(event) => provider.setSettings({ apiKey: event.target.value })} placeholder="Paste your provider key" type="password" value={provider.apiKey} />
     <label className="remember-option"><input checked={provider.rememberOnDevice} onChange={(event) => provider.setSettings({ rememberOnDevice: event.target.checked })} type="checkbox" />Remember my key</label>
-    <div className="form-actions"><Button onClick={handleSave} type="button">Save provider</Button><Button onClick={handleTest} type="button" variant="secondary">Test connection</Button>{provider.hasRememberedKey && <Button onClick={handleRemove} type="button" variant="ghost">Remove remembered key</Button>}{status && <span className="status-message">{status}</span>}</div>
+    <div className="form-actions"><Button onClick={handleSave} type="button">Save provider</Button><Button onClick={handleTest} type="button" variant="secondary">Test connection</Button>{provider.hasRememberedKey && <Button onClick={handleRemove} type="button" variant="ghost">Remove remembered key</Button>}{status && <span className="status-message" role="status">{status}</span>}</div>
   </Card>;
 }

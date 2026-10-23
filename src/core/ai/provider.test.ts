@@ -20,8 +20,13 @@ describe("requestStructured", () => {
     [429, "rate_limited"],
     [503, "unavailable"],
     [400, "request_failed"],
+    [404, "request_failed"],
   ])("maps HTTP %i to %s", async (status, code) => {
     await expect(run(reply(status, {}))).rejects.toMatchObject({ code });
+  });
+
+  it("tells the student when the model name is unknown", async () => {
+    await expect(run(reply(404, {}))).rejects.toThrow("does not know this model");
   });
 
   it("maps a network failure to a typed error", async () => {

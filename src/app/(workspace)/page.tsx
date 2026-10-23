@@ -1,9 +1,12 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/core/components/Card";
 import { Chip } from "@/core/components/Chip";
 import { UploadDropzone } from "@/features/material";
 import { ContinueCard, ProgressOverview } from "@/features/progress";
 import { StudySetList } from "@/features/study-sets";
+
+export const metadata = { title: "Dashboard" };
 
 export default function DashboardPage() {
   return <div className="page-stack">
@@ -32,7 +35,7 @@ export default function DashboardPage() {
         <span className="eyebrow">Foundation</span>
         <h2>Getting started</h2></div></div><ol className="steps-list"><li><span>1</span>Explore the workspace</li>
           <li><span>2</span>Configure an AI provider</li><li><span>3</span>Upload your first material</li></ol>
-        <Link className="text-link" href="/help">View all steps →</Link></Card>
+        <Link className="text-link" href="/help">View all steps <ArrowRight aria-hidden="true" size={14} /></Link></Card>
       <ProgressOverview /></section>
   </div>;
 }

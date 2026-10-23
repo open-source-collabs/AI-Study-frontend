@@ -5,15 +5,18 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/core/components/Button";
 import { Card } from "@/core/components/Card";
 import { Input } from "@/core/components/Input";
+import { Thinking } from "@/core/components/Thinking";
 import { useVisitCheckpoint } from "@/core/hooks/use-checkpoint";
 import { NOT_FOUND_ANSWER } from "../api/ask-question";
 import { useAsk } from "../hooks/useAsk";
 import type { Exchange } from "../types";
 
+const ASKING_STEPS = ["Searching your material...", "Reading the best passages...", "Writing the answer..."];
+
 function ExchangeCard({ exchange }: { exchange: Exchange }) {
   return <Card className="exchange">
     <p className="exchange-question">{exchange.question}</p>
-    {exchange.status === "asking" && <p className="muted-text" role="status">Looking through your material...</p>}
+    {exchange.status === "asking" && <Thinking steps={ASKING_STEPS} />}
     {exchange.status === "error" && <p className="form-error" role="alert">{exchange.error}</p>}
     {exchange.status === "done" && <>
       <p className="exchange-answer">{exchange.answer}</p>

@@ -4,6 +4,7 @@ import { MATERIAL_CHAR_LIMIT } from "@/core/ai";
 import type { OutputStatus } from "@/core/hooks/use-generated-output";
 import { Button } from "./Button";
 import { Card } from "./Card";
+import { Thinking } from "./Thinking";
 
 type OutputStatesProps = {
   label: string;
@@ -17,7 +18,10 @@ type OutputStatesProps = {
 // One place for every AI output view's loading / empty / generating / error states; `children` is the ready view.
 export function OutputStates({ label, status, error, canGenerate, onGenerate, children }: OutputStatesProps) {
   if (status === "loading") return <div className="loading-state" role="status">Loading...</div>;
-  if (status === "generating") return <div className="loading-state" role="status">Generating your {label}. This can take up to a minute.</div>;
+  if (status === "generating") {
+    const steps = ["Reading your material...", "Working out the key ideas...", `Writing your ${label}...`, "Almost there, thanks for waiting..."];
+    return <Card className="thinking-card"><Thinking skeleton steps={steps} /><p className="muted-text">This can take up to a minute. You can stay on this page.</p></Card>;
+  }
   if (status === "error") {
     return <Card className="empty-card"><h2>Something went wrong</h2><p role="alert">{error}</p><div className="empty-actions"><Button onClick={onGenerate} variant="secondary">Try again</Button><Link className="button button-ghost" href="/setting/provider">Provider settings</Link></div></Card>;
   }

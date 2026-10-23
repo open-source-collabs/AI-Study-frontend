@@ -47,13 +47,13 @@ export function UploadDropzone() {
     <label className="field-label" htmlFor="material-title">Study set title</label>
     <Input id="material-title" onChange={(event) => setTitle(event.target.value)} placeholder="e.g. Operating systems" value={title} />
     <div className="upload-actions">
-      <input accept=".pdf,.txt,.md,.markdown,text/plain,text/markdown,application/pdf" className="visually-hidden" onChange={(event) => { const file = event.target.files?.[0]; event.target.value = ""; void handleFile(file); }} ref={fileInputRef} type="file" />
+      <input accept=".pdf,.txt,.md,.markdown,text/plain,text/markdown,application/pdf" className="visually-hidden" onChange={(event) => { const file = event.target.files?.[0]; event.target.value = ""; void handleFile(file); }} ref={fileInputRef} tabIndex={-1} type="file" />
       <Button disabled={isSaving} onClick={() => fileInputRef.current?.click()} type="button" variant="secondary">Choose PDF or notes file</Button>
       <span className="muted-text">Max 10 MB · text PDFs only</span>
     </div>
     <label className="field-label" htmlFor="material-notes">Or paste notes</label>
     <textarea className="input material-textarea" id="material-notes" onChange={(event) => setNotes(event.target.value)} placeholder="Paste lecture notes or Markdown here..." rows={5} value={notes} />
-    <div className="form-actions"><Button disabled={isSaving || !notes.trim()} onClick={handleNotesSubmit} type="button">Save notes</Button>{status && <span className="status-message">{status}</span>}</div>
+    <div className="form-actions"><Button disabled={isSaving || !notes.trim()} onClick={handleNotesSubmit} type="button">Save notes</Button>{status && <span className="status-message" role="status">{status}</span>}</div>
     {error && <p className="form-error" role="alert">{error}</p>}
   </Card>;
 }
