@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { useStoredStudySets } from "@/core/hooks/use-stored-study-sets";
 import type { StudySet } from "@/core/storage";
 import { ActiveLink } from "./ActiveLink";
+import { ThemeToggle } from "./ThemeToggle";
 
 const utilityNavigation = [
   { href: "/help", label: "Help & guide", icon: CircleHelp },
@@ -16,7 +17,7 @@ type NavigationItem = { href: string; label: string; icon: LucideIcon };
 
 function NavigationLink({ href, label, icon: Icon }: NavigationItem) {
   return <ActiveLink activeClassName="nav-link-active" className="nav-link" href={href}>
-    <span className="nav-icon" aria-hidden="true"><Icon size={18} /></span><span>{label}</span>
+    <span className="nav-icon" aria-hidden="true"><Icon size={18} /></span><span title={label}>{label}</span>
   </ActiveLink>;
 }
 
@@ -41,7 +42,10 @@ export function AppShell({ children }: { children: ReactNode }) {
     <a className="skip-link" href="#main-content">Skip to content</a>
     <div className="mobile-topbar">
       <Link aria-label="StudyOS home" className="brand" href="/"><span className="brand-mark" aria-hidden="true">S</span><span>StudyOS</span></Link>
-      <span className="status-dot-label"><span className="status-dot" aria-hidden="true" />Ready</span>
+      <div className="topbar-actions">
+        <span className="status-dot-label"><span className="status-dot" aria-hidden="true" />Ready</span>
+        <ThemeToggle />
+      </div>
     </div>
 
     <aside className="sidebar" aria-label="Primary navigation">
@@ -61,10 +65,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           {utilityNavigation.map((item) => <NavigationLink key={item.href} {...item} />)}
         </nav>
       </div>
-      <div className="workspace-status">
-        <span className="avatar">AS</span>
-        <span><strong>AI Study</strong><small>Learning workspace</small></span>
-        <span className="status-dot" aria-label="Local workspace ready" />
+      <div className="sidebar-bottom">
+        <ThemeToggle />
+        <div className="workspace-status">
+          <span className="avatar">AS</span>
+          <span><strong>AI Study</strong><small>Learning workspace</small></span>
+          <span className="status-dot" aria-label="Local workspace ready" />
+        </div>
       </div>
     </aside>
 
